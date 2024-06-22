@@ -1,0 +1,642 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Salsa&display=swap');
+
+
+.specdiv{
+    overflow-y: scroll;
+      scrollbar-width: thin; 
+      
+       
+   
+       
+}
+
+body::-webkit-scrollbar{
+    width: 0;
+}
+
+.specdiv::-webkit-scrollbar-thumb {
+    background: rgba(51, 78, 172, 1);
+    border-radius: 100px;
+ }
+
+ .resimg1{
+    width : 274px;
+    height: 200px;
+}
+.resimg2{
+    width : 223px;
+    height: 180px;
+}
+.resimg3{
+    width : 292px;
+    height : 128px
+}
+.resimg4{
+    width: 258px;
+    height: 108px
+}
+.restext{
+    font-size: 18px;
+}
+.biggerrestext{
+    font-size: 54px;
+}
+.main-body{
+    overflow:hidden;
+}
+.resnavdiv{
+    display : none
+}
+.departmentdiv{
+    transition: transform 0.3s ease-in-out; 
+}
+
+.departmentdiv:hover{
+    transform: scale(1.1); 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.departmentdiv:hover > * {
+    transition: none;
+}
+
+
+
+
+@media screen and (orientation: portrait) and  (max-width : 1000px) and (min-width: 800px) {
+   
+    .logindiv{
+        height: 50vh;
+        width: 70vw;
+    }
+    .signupdiv{
+        height : 63vh;
+        width : 70vw
+    }
+
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: end;
+    }
+
+    .large-font{
+        font-size: 42px;
+
+    }
+    .medium-font{
+        font-size: 17px;
+    }
+    .small-font{
+        font-size: 15px;
+    }
+    .special-div{
+        flex-wrap: wrap;
+        
+    }
+    .navdiv{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+    
+   
+  }
+
+
+  @media screen and (orientation: portrait) and  (max-width : 800px) and (min-width: 650px){
+
+    .logindiv{
+        height: 50vh;
+        width: 70vw;
+    }
+    .signupdiv{
+        height : 55vh;
+        width : 70vw
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: end;
+    }
+    .large-font{
+        font-size: 42px;
+
+    }
+    .medium-font{
+        font-size: 17px;
+    }
+    .small-font{
+        font-size: 15px;
+    }
+    .special-div{
+        flex-wrap: wrap;
+        
+    }
+    .navdiv{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+
+  }
+
+@media screen and (orientation : portrait) and (min-width:910px){
+    .landingpagediv1{
+        width : 100%
+    }
+    .logindiv{
+        height: 40vh;
+        width: 70vw;
+    }
+    .signupdiv{
+        height : 43vh;
+        width : 70vw;
+        
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: end;
+    }
+    .large-font{
+        font-size: 60px;
+
+    }
+    .medium-font{
+        font-size: 36px;
+    }
+    .small-font{
+        font-size: 24px;
+    }
+    .special-div{
+        flex-wrap: wrap;
+    }
+    .navdiv{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+    
+}
+
+
+
+@media screen and (orientation : portrait) and (max-width:650px ){
+   
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        width: 100%;
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    .large-font{
+        font-size: 28px;
+
+    }
+    .medium-font{
+        font-size: 14px;
+    }
+    .small-font{
+        font-size: 8px;
+    }
+    .special-div{
+        flex-wrap: wrap;
+
+        
+    }
+    .navdiv{
+        display: none;
+    }
+
+    .logindiv{
+        height: 48vh;
+        width: 90vw;
+    }
+
+    .signupdiv{
+        height : 58vh;
+        width : 90vw
+    }
+
+    .resimg1{
+        width : 176px;
+        height: 118px;
+    }
+    .resimg2{
+        width : 133px;
+        height: 119px;
+    }
+    .resimg3{
+        width : 156px;
+        height : 73px
+    }
+    .resimg4{
+        width: 133px;
+        height: 79px
+    }
+    .restext{
+        font-size: 15px;
+    }
+    .biggerrestext{
+        font-size: 24px;
+    }
+    .hidden-item{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+   
+
+  
+    
+
+}
+@media screen and (orientation : portrait) and (max-width: 390px){
+    .logindiv{
+        height: 62vh;
+        width: 90vw;
+    }
+    .signupdiv{
+        height : 75vh;
+        width : 90vw
+    }
+    .resnavdiv{
+        display: block ;
+    }
+}
+
+@media screen and (orientation : portrait) and (max-width: 350px) and (min-width : 300px){
+    .logindiv{
+        height: 50vh;
+        width: 90vw;
+    }
+    .signupdiv{
+        height : 58vh;
+        width : 90vw
+    }
+    .resnavdiv{
+        display: block ;
+    }
+    
+    
+}
+
+@media screen and (orientation : landscape) and (max-width: 699px){
+    .resimg1{
+        width : 176px;
+        height: 118px;
+    }
+    .resimg2{
+        width : 133px;
+        height: 119px;
+    }
+    .resimg3{
+        width : 156px;
+        height : 73px
+    }
+    .resimg4{
+        width: 133px;
+        height: 79px
+    }
+    .restext{
+        font-size: 15px;
+    }
+    .biggerrestext{
+        font-size: 24px;
+    }
+    .logindiv{
+        width:80vw;
+        height: 70vh
+    }
+    .signupdiv{
+        height : 75vh;
+        width : 80vw
+    }
+    .special-div{
+        flex-wrap: wrap;
+    }
+    .navdiv{
+        display: none;
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        width: 100%;
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    .large-font{
+        font-size: 28px;
+
+    }
+    .medium-font{
+        font-size: 14px;
+    }
+    .small-font{
+        font-size: 8px;
+    }
+  
+    .hidden-item{
+        display: none;
+    }
+    .main-body{
+        overflow:auto;
+    }
+    .hidden-div{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+
+}
+@media screen and (orientation : landscape) and (max-width:1023px) and (min-width: 720px){
+
+    .resimg1{
+        width : 176px;
+        height: 118px;
+    }
+    .resimg2{
+        width : 133px;
+        height: 119px;
+    }
+    .resimg3{
+        width : 156px;
+        height : 73px
+    }
+    .resimg4{
+        width: 133px;
+        height: 79px
+    }
+    .restext{
+        font-size: 15px;
+    }
+    .biggerrestext{
+        font-size: 24px;
+    }
+    .logindiv{
+        width:60vw;
+        height: 85vh
+    }
+    .signupdiv{
+        height : 86vh;
+        width : 60vw
+    }
+  
+    .special-div{
+        flex-wrap: wrap;
+    }
+    .navdiv{
+        display: none;
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        width: 100%;
+    }
+    .landingpagediv1{
+        width : 100%
+    }
+    .landingpagediv2{
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+    .large-font{
+        font-size: 28px;
+
+    }
+    .medium-font{
+        font-size: 14px;
+    }
+    .small-font{
+        font-size: 8px;
+    }
+    .hidden-item{
+        display: none;
+    }
+    .main-body{
+        overflow:auto;
+    }
+    .hidden-div{
+        display: none;
+    }
+    .resnavdiv{
+        display: block ;
+    }
+}
+@media screen and (orientation: landscape) and (min-width :1024px){
+    .ipadlowerdiv2{
+        width :100%;
+    }
+
+    .ipaddiv{
+        display : flex;
+        flex-direction: row;
+    }
+    .picturediv{
+        justify-content: flex-end;
+        
+    }
+
+    .picturediv img{
+        width : 620px;
+        height : 620px
+    }
+    .img{
+        display : none
+    }
+    .large-font{
+        font-size: 55px;
+
+    }
+    .medium-font{
+        font-size: 30px;
+    }
+    .small-font{
+        font-size: 24px;
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+    .logindiv{
+        height: 72vh;
+        width: 40vw;
+    }
+    .signupdiv{
+        height : 80vh;
+        width : 40vw
+    }
+
+    
+
+   
+  
+}
+@media screen and (orientation: landscape) and (max-width : 1400px) and (min-width :1210px){
+    .large-font{
+        font-size: 54px;
+
+    }
+    .medium-font{
+        font-size: 24px;
+    }
+    .small-font{
+        font-size: 20px;
+    }
+    .logindiv{
+        height: 72vh;
+        width: 40vw;
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+    .signupdiv{
+        height : 84vh;
+        width : 40vw
+    }
+}
+/* @media screen and (orientation: landscape) and (max-width : 1200px) and (min-width :1190px){
+    .large-font{
+        font-size: 60px;
+
+    }
+    .medium-font{
+        font-size: 36px;
+    }
+    .small-font{
+        font-size: 24px;
+    }
+    .logindiv{
+        height: 89vh;
+        width: 40vw;
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+
+} */
+
+@media screen and (orientation: landscape) and (max-width : 1098px) and (min-width :1024px){
+    .large-font{
+        font-size: 50px;
+
+    }
+    .medium-font{
+        font-size: 20px;
+    }
+    .small-font{
+        font-size: 18px;
+    }
+    .logindiv{
+        height: 85vh;
+        width: 40vw;
+    }
+    .signupdiv{
+        height : 91vh;
+        width : 40vw
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+}
+@media screen and (orientation: landscape) and (max-width : 1250px) and (min-width :1210px){
+    .large-font{
+        font-size: 60px;
+
+    }
+    .medium-font{
+        font-size: 36px;
+    }
+    .small-font{
+        font-size: 24px;
+    }
+    .logindiv{
+        height: 70vh;
+        width: 40vw;
+    }
+    .signupdiv{
+        height : 77vh;
+        width : 40vw
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+}
+
+@media screen and (orientation: landscape) and (max-width : 2015px) and (min-width :1550px){
+    .large-font{
+        font-size: 65px;
+
+    }
+    .medium-font{
+        font-size: 40px;
+    }
+    .small-font{
+        font-size: 32px;
+    }
+    .landingpagediv1{
+        width : 60%
+    }
+    .landingpagediv2{
+        width: 40%;
+    }
+    .logindiv{
+        height: 55vh;
+        width: 40vw;
+    }
+    .signupdiv{
+        height : 52vh;
+        width : 40vw
+    }
+    
+
+}
+
+
