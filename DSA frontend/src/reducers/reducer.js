@@ -1,11 +1,12 @@
-import { Authlogin ,Authdelete, Authupdate, AuthUpdateImg, DepartmentLogin, Departmentdelete } from "./constants"
+import { Authlogin ,Authdelete, Authupdate, AuthUpdateImg, DepartmentLogin, Departmentdelete, AuthadminUpdate , Authrefresh} from "./constants"
 
 const InitialState = {
     access : "",
     refresh : "",
     id : "",
     img : "",
-    authenticated : false
+    authenticated : false,
+    is_admin : false
     
 }
 
@@ -19,7 +20,8 @@ export const Authreducer = (state = InitialState, action) => {
                 refresh : action.payload.refresh,
                 id : action.payload.id,
                 img : action.payload.img,
-                authenticated : true
+                authenticated : true,
+                is_admin : false
             })
         case Authupdate :
             return({
@@ -28,7 +30,19 @@ export const Authreducer = (state = InitialState, action) => {
                 refresh : action.payload.refresh,
                 id : action.payload.id,
                 img : action.payload.img,
-                authenticated : true
+                authenticated : true,
+                is_admin : action.payload.is_admin
+            })
+            
+        case Authrefresh :
+            return({
+                ...state,
+                access : action.payload.access,
+                refresh : action.payload.refresh,
+                id : action.payload.id,
+                img : action.payload.img,
+                authenticated : true,
+
             })
         case Authdelete :
             return({
@@ -37,13 +51,20 @@ export const Authreducer = (state = InitialState, action) => {
                 refresh :"",
                 id : "",
                 img : "",
-                authenticated : false
+                authenticated : false,
+                is_admin : false
             })
         case AuthUpdateImg :
             return({
                 ...state,
                 img : action.payload
             })
+        case AuthadminUpdate: 
+        return({
+            ...state,
+            is_admin : action.payload.is_admin
+        })
+
         default:
             return state
         }
@@ -77,7 +98,4 @@ export const DepartmentAuthreducer = (state = DepartmentInitialState, action) =>
         default:
             return state
     }
-
-
-
 } 

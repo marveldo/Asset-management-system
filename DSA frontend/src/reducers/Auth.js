@@ -1,4 +1,5 @@
-import { Authlogin ,Authupdate ,Authdelete,AuthUpdateImg,DepartmentLogin, Departmentdelete } from "./constants";
+import { type } from "@testing-library/user-event/dist/type";
+import { Authlogin ,Authupdate ,Authdelete,AuthUpdateImg,DepartmentLogin, Departmentdelete,AuthadminUpdate ,Authrefresh} from "./constants";
 import { jwtDecode } from "jwt-decode";
 
  
@@ -9,10 +10,11 @@ export const Setuser = (data) => {
         access : data.access,
         refresh : data.refresh,
         id : user.user_id,
-        img: user.img
+        img: user.img,
+        is_admin : data.is_admin
     }
     return({
-        type:Authlogin,
+        type:Authupdate,
         payload : new_data
     })
 }
@@ -44,12 +46,22 @@ export const Updateuser = (data) => {
         access : data.access,
         refresh : data.refresh,
         id : user.user_id,
-        img: user.img
+        img: user.img,
     }
     return({
-        type : Authupdate,
+        type : Authrefresh,
         payload : new_data
     })
+}
+
+export const Updateadminstatus = (data) => {
+   const tokens = JSON.parse(localStorage.getItem('auttokens'))
+   tokens.is_admin = data.is_admin
+   localStorage.setItem('auttokens',JSON.stringify(tokens))
+   return({
+    type : AuthadminUpdate,
+    payload : data
+   })
 }
 
 export const Logoutuser = () => {

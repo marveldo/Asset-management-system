@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .serializers import UserSerializer,CustomObtainPairserializer,CustomRefreshSerializer,InstitutionSerializer,DepartmentSerializer,DepartmentalLogin
-from .models import User,Institution,Department
+from .serializers import UserSerializer,CustomObtainPairserializer,CustomRefreshSerializer,InstitutionSerializer,DepartmentSerializer,DepartmentalLogin,AssetSerializer,Activity,CommentSerializer,TaskSerializer,RequestSerializer
+from .models import User,Institution,Department,Asset,Comment,Task,InstitutionRequest
 from rest_framework import generics
 from rest_framework import permissions
 from rest_framework.decorators import action
@@ -81,7 +81,18 @@ class InstitutionViewset(viewsets.ModelViewSet):
     serializer_class = InstitutionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if self.request.GET.get('institution_name'):
+            queryset = queryset.filter(institution_name__icontains = self.request.GET.get('institution_name'))
 
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        institutions = self.get_queryset()
+        serializer = self.get_serializer(institutions, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data = request.data, context = {'request': request})
         if serializer.is_valid(raise_exception = True):
@@ -91,6 +102,7 @@ class InstitutionViewset(viewsets.ModelViewSet):
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 class DepartmentLogin(generics.GenericAPIView):
     queryset = Department.objects.all()
@@ -99,11 +111,65 @@ class DepartmentLogin(generics.GenericAPIView):
 
 
     def post(self, request):
-        serializer = self.get_serializer(data = request.data)
+        serializer = self.get_serializer(data = request.data , context = {'request': request})
         if serializer.is_valid(raise_exception = True):
             return Response(serializer.data)
         else :
             return Response(serializer.errors,status=status.HTTP_401_UNAUTHORIZED)
+        
+class AssetModelviewset(viewsets.ModelViewSet):
+    queryset = Asset.objects.all()
+    serializer_class = AssetSerializer
+    permission_classes =[permissions.IsAuthenticated]
+
+        
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Activity.objects.create(
+            department = instance.department,
+            activity = f'{request.user.staff_id} deleted {instance.asset_name}'
+        )
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class Commentviewset(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data= request.data, context = {'request' : request})
+        if serializer.is_valid(raise_exception = True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class Taskviewset(viewsets.ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data = request.data, context = {'request': request})
+        if serializer.is_valid(raise_exception = True):
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+class RequestViewSet(viewsets.ModelViewSet):
+    queryset = InstitutionRequest.objects.all()
+    serializer_class = RequestSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+ 
+
+
+
+
+
+    
+
+   
 
 
 

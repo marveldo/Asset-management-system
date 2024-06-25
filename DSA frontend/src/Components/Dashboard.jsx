@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom"
 import { useParams } from "react-router-dom"
 import navicon9 from "../Images/49855_closed_padlock_icon 1.svg"
 import { Link } from "react-router-dom"
+import { Updateadminstatus } from "../reducers/Auth"
 
 
 
@@ -72,7 +73,7 @@ export const Dashboard = () => {
     id : "",
     password : ""
   })
- 
+  
   const [cansee, setcansee] = React.useState(false)
   const [showextranav, setshowextranav] = React.useState(false)
   const [isloading, setloading] = React.useState(true)
@@ -133,6 +134,8 @@ const setpasswordformchange = (event) => {
     })
   })
 }
+
+
  
 
 
@@ -238,6 +241,15 @@ const changeimgform = (event) => {
       try{
         const response = await axiis.get(`/Institution/${id}/`)
         setdata(response.data)
+        if(response.data.admin.user === Authdetails.id){
+          const status = {is_admin : true}
+          dispatch(Updateadminstatus(status))
+      }
+       else{
+       const status = {is_admin : false}
+        dispatch(Updateadminstatus(status))
+       }
+        
         
 
       }
@@ -350,6 +362,7 @@ let eyeclosed =   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0
     if(!user_present){
          navigate('/validate',{replace : true})
     }
+    
     const departments = data.departments.map((object)=> {
       return(<div key={object.id} className={`w-[219px] rounded-[20px] h-[150px] mb-7  shadow-shadowcolour shadow-lg p-3 relative departmentdiv`} style={{background: `${object.color}`}} onClick={()=>{Clickdepartment(object.id)}}>
         <img src={object.department_profile} className="mb-1 rounded-full w-[40px] h-[40px]" alt="profile"/>
@@ -358,7 +371,7 @@ let eyeclosed =   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0
    )
     })
     div =   <div className={`px-3 h-[70%] pt-3 flex gap-x-6 max-[600px]:justify-center content-start flex-wrap overflow-y-auto gap-y-16 specdiv`}>
-    <div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative">
+    <div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative" onClick={()=> {navigate(`/setup/${id}/`, {state : {formdiv : true}})}}>
         <p className="sm:text-[24px] text-[19px]">Create my </p>
         <span className="sm:text-[24px] text-[19px]">Department</span>
 
@@ -483,7 +496,7 @@ let eyeclosed =   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0
                     <li className="p-4 flex gap-x-3  bg-dashboardcolor rounded-l-[20px] justify-start w-[87%]  items-center"> <img src={navicon1} className="w-[29px] h-[29px]" alt="dashboard icon"/>  <p className="hidden-item">Dashboard</p></li>
                     <Link to={`/setup/${id}`} className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%] items-center"> <img src={navicon3} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Setup</p></Link>
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]  items-center"> <img src={navicon4} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Help</p> </li>
-                    <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]   items-center"> <img src={navicon5} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item"> Requests</p></li>
+                    <li className={`p-4 flex gap-x-3 ${Authdetails.is_admin ? '' : 'hidden'}  rounded-l-[20px] justify-start w-[87%]   items-center`}> <img src={navicon5} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item"> Requests</p></li>
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%] opacity-0  items-center"> <img src={navicon2} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Assets</p> </li> 
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]  opacity-0 items-center" > <img src={navicon7} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Activity</p></li>
 

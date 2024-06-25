@@ -8,6 +8,7 @@ import axios from "axios"
 import { useDispatch } from "react-redux"
 import { LoginUser } from "../reducers/Auth"
 import { useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export const Loginpage = () => {
   const [loginstate, setloginstate] = React.useState({staff_id : "", password: ""})
@@ -148,7 +149,7 @@ let loadingicon = <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="
 
         <div className="flex flex-col sm:gap-y-4 gap-y-3   text-center ">
           <p className=" restext">Forgot Password?</p>
-          <p className="restext ">Don’t have an account? <span className="text-buttoncolor"> Sign Up</span></p>
+          <p className="restext ">Don’t have an account? <Link to="/Signup"  className="text-buttoncolor"> Sign Up</Link></p>
         </div>
       </div>
        

@@ -30,14 +30,21 @@ export const Department = () => {
   const [imgloading, setimgloading] = React.useState(false)
   const [error , seterror] = React.useState(false)
   const [errortype, seterrortype] = React.useState({
+    departments: false,
+    empty_fields : false,
+    asset : false,
     Updateimage : false,
-    Changingpassword : false
+    Changingpassword : false,
   })
+  
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const axiis = Useaxios()
   const Authdetails = useSelector(state => state.Authdetails)
   const AuthDepartmentdetails = useSelector(state => state.AuthDepartmentdetails)
+  const [assetform, setassetformstate] = React.useState({department : AuthDepartmentdetails.id , asset_name : '', asset_quantity : ''})
+  const [assetformloading, setassetformloading] = React.useState(false)
+  const [assetdiv, setassetdiv] =React.useState(false)
   const handleoiconclick = () => {
     setshowresnav(prev => !prev)
     setshowextranav(false)
@@ -53,6 +60,9 @@ const clickPopupdiv =() => {
       setimgformdiv(false)
       setimgform(null)
       setimgsubmittingform(null)
+    }
+    if(assetdiv){
+      setassetdiv(false)
     }
 }
  
@@ -116,6 +126,15 @@ const changeimgform = (event) => {
       
     }
   }
+  const  AssetFormchange = (event) => {
+    const {name, value} = event.target
+
+    setassetformstate(prev => ({
+      ...prev,
+      [name] : value
+    }))
+    
+  }
 
  const clickTryagain = () => {
   seterror(false)
@@ -126,8 +145,60 @@ const changeimgform = (event) => {
         Updateimage : false
       })
     })
+    if(errortype.empty_fields){
+      seterrortype(prev => ({
+        ...prev,
+        empty_fields : false
+      }))
+    }
+    if(errortype.asset){
+      seterrortype(prev => ({
+        ...prev,
+        asset : false
+      }))
+    }
   }
   
+ }
+ const Submittobackend = async() => {
+  setassetformloading(true)
+  try{
+    const response = await axiis.post(`/Assets/`, assetform)
+    navigate(`/assets/${AuthDepartmentdetails.id}/`)
+  
+  }
+  catch(error){
+     console.error(error)
+      seterror(true)
+      seterrortype(prev => ({
+        ...prev,
+        asset : true
+      }))
+  }
+  finally{
+    setassetformloading(false)
+  }
+ }
+
+ const SubmiTAssetform = (e) =>{
+  e.preventDefault();
+  if(assetform.asset_name === '' || assetform.asset_quantity === ''){
+    seterror(true)
+    seterrortype(prev => ({
+      ...prev,
+      empty_fields : true
+    }))
+  }
+  else if(assetform.asset_quantity < 0){
+      seterror(true)
+      seterrortype(prev => ({
+        ...prev,
+        empty_fields : true
+      }))
+  }
+  else{
+     Submittobackend()
+  }
  }
 
 
@@ -136,15 +207,32 @@ const changeimgform = (event) => {
   if(errortype.Updateimage){
     message = "Check Image Uploaded or network"
   }
+  if(errortype.departments){
+    message = "Check Internet Connection"
+  }
   if(errortype.Changingpassword){
     message = "check internet Connection"
+  }
+  if(errortype.empty_fields){
+    message = "Fields cannot be empty"
+  }
+  if (errortype.asset){
+    message = "Check Internet Connection"
   }
 
 
   let loadingicon = <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity={0.25}></path>
 <path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></path>
 </svg>
+ let assetloadingicon = <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity={0.25}></path>
+ <path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></path>
+ </svg>
 
+ const Showassets = () => {
+  setshowdiv(true)
+  setassetdiv(true)
+  setshowextranav(false)
+ }
 
 
   React.useEffect(()=>{
@@ -167,7 +255,8 @@ const changeimgform = (event) => {
    <button className="bg-red-600 text-white p-3 rounded-[12px]" onClick={clickTryagain}>Try again</button>
           </div>
         </div>
-      <div className={`h-[100vh] absolute ${showdiv ? 'flex':'hidden'}  top-0 w-full  justify-center items-center bg-shadowcolour z-40`}>
+           {/* IMAGINARY DIV */}
+           <div className={`h-[100vh] absolute ${showdiv ? 'flex':'hidden'}  top-0 w-full  justify-center items-center bg-shadowcolour z-40`}>
         <form className={`bg-white py-3 px-8 ${imgformdiv ? 'flex':'hidden'} text-center flex-col relative gap-y-5 items-center rounded-[14px]`} onSubmit={Updatebackendimg} encType="multipart/form-data">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 absolute top-3 right-3" onClick={clickPopupdiv}>
   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -180,11 +269,52 @@ const changeimgform = (event) => {
 
           <button className="p-3 bg-buttoncolor rounded-[20px]">{imgloading ? loadingicon : 'Submit'}</button>
         </form>
+
+          {/* ASSETFORMDIV */}
+      <div className={`bg-white ${assetdiv? 'animate__animated animate__fadeInRight animate__faster': 'hidden'} flex flex-col sm:h-[380px] sm:w-[420px] w-[308px] h-[400px]  rounded-[20px] shadow-shadowcolour shadow-lg overflow-x-hidden py-2  relative`}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 absolute top-3 right-3" onClick={clickPopupdiv}>
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg>
+
+<div className="w-full justify-center flex gap-x-1 items-center"><h1 className=" text-center text-[25px]">Create Asset</h1><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+</svg>
+
+</div>
+
+       <form className="h-full flex flex-col pt-5  items-center text-center gap-y-10" onSubmit={SubmiTAssetform}>
+           <div className="w-full">
+            <p>Asset name</p>
+            <input name="asset_name" type="text" value={assetform.asset_name} className="p-3 w-[70%] focus:outline-none rounded-[10px] " style={{backgroundColor : `${AuthDepartmentdetails.color}`}} onChange={AssetFormchange} disabled={assetformloading}/>
+           </div>
+
+           <div className="w-full">
+            <p>Asset Quantity</p>
+            <input name="asset_quantity" value={assetform.asset_quantity} type="number" className="p-3 w-[70%] focus:outline-none rounded-[10px] " style={{backgroundColor : `${AuthDepartmentdetails.color}`}} onChange={AssetFormchange} disabled={assetformloading}/>
+           </div>
+
+           <div>
+            <button className="p-3 rounded-[15px]" style={{backgroundColor : `${AuthDepartmentdetails.color}`}}>
+              {assetformloading? assetloadingicon :'Submit'}
+            </button>
+           </div>
+
+
+
+      </form>
+
+                         
+                         {/* END OF ASSET FORM DIV */}
+                        
+     </div>
       </div>
+
+  
+      {/* END OF IMAGINARY DIV */}
       
         <Navbar clickicon={handleoiconclick} img={Authdetails.img} clickprofile={handleprofileclick}/>
         <div className="flex h-[100vh] relative">
-
+     
         <div className={`absolute top-[-18px] right-12 ${showresnav? 'resnavdiv animate__animated animate__faster animate__bounceInDown' : 'hidden'} z-50 `}>
                     <div className='py-5 px-12 flex flex-col gap-y-3 relative items-center bg-navcolour  rounded-[20px]'>
                     <img src={polygon} alt="decision barrier" className='absolute right-0 top-[-7px] rotate-[16deg]'/>
@@ -211,8 +341,14 @@ const changeimgform = (event) => {
                   <div>Change password</div>
              </div>
 
+      
+          
+         
+
 
           </div>
+          
+        
 
           
             <div className="w-[20vw] z-10">
@@ -231,7 +367,7 @@ const changeimgform = (event) => {
             </div>
             <div className={`w-[80vw] flex gap-y-9 flex-col p-6 z-10`} style={{backgroundColor : `${AuthDepartmentdetails.color}`}}>
                 <h1 className="sm:text-[32px] text-[23px]">Dashboard</h1>
-                <div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative">
+                <div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative" onClick={Showassets}>
         <p className="sm:text-[24px] text-[19px]">Add your </p>
         <span className="sm:text-[24px] text-[19px]">Asset</span>
 

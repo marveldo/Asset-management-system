@@ -58,6 +58,12 @@ class ColourChoices(models.TextChoices):
       GREEN = 'green'
       PURPLE = 'purple'
 
+
+class ProgressChoices(models.TextChoices):
+      DONE = 'done'
+      IN_PROGRESS = 'in_progress'
+      NOT_DONE = 'not_done'
+
 class Department(models.Model):
 
       Institution = models.ForeignKey(Institution, blank = True , null=True, on_delete=models.CASCADE )
@@ -108,6 +114,75 @@ class Admin(models.Model):
 
       def __str__(self):
             return f'{self.user}  is admin of {self.institution}'
+      
+
+
+      
+class Task(models.Model):
+      department = models.ForeignKey(Department, blank=True, null = True, on_delete = models.CASCADE)
+      task = models.TextField(blank = True , null =True)
+      progress_status = models.CharField(max_length=250, default ='not_done', blank = True , null=True,choices=ProgressChoices.choices)
+      created = models.DateTimeField(blank = True, null=True, auto_now_add=True)
+
+      def __str__(self):
+            return f'{self.task} of {self.department}'
+      
+      class Meta:
+            ordering = ['-created']
+      
+class Comment(models.Model):
+      department = models.ForeignKey(Department, blank=True, null = True, on_delete = models.CASCADE)
+      user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+      comment = models.TextField(blank =True, null=True)
+      created = models.DateTimeField(blank = True, null=True, auto_now_add=True)
+
+
+      def __str__(self):
+            return f'{self.comment} of {self.department}'
+      class Meta:
+            ordering = ['-created']
+
+class Activity(models.Model):
+
+      department = models.ForeignKey(Department, blank = True, null=True, on_delete=models.CASCADE )
+      activity = models.TextField(blank = True, null = True)
+      created = models.DateTimeField(blank = True, null=True, auto_now_add=True)
+
+
+      def __str__(self):
+           return f'{self.activity} of {self.department}'
+      class Meta:
+            ordering = ['-created']
+
+class Asset(models.Model):
+      department = models.ForeignKey(Department, blank=True, null=True, on_delete=models.CASCADE)
+      asset_name = models.CharField(max_length=1000,blank = True, null = True)
+      asset_quantity = models.IntegerField(default=0, blank=True, null=True)
+      last_edited = models.CharField(max_length=250, blank=True, null=True)
+
+      def __str__(self):
+            return f'{self.asset_name} of {self.department}'
+      
+class RequestType(models.TextChoices):
+      USER_TYPE = "user_type"
+      DEPARTMENT_TYPE = "department_type"
+
+class InstitutionRequest(models.Model):
+      user = models.ForeignKey(User, blank = True, null=True, on_delete = models.CASCADE)
+      institution = models.ForeignKey(Institution, blank=True, null=True, on_delete=models.CASCADE )
+      request_type = models.CharField(max_length=250, blank = True, null=True, choices=RequestType.choices)
+      request_info = models.CharField(max_length=250, blank=True, null=True )
+      department_name = models.CharField(max_length=500, blank=True, null=True)
+      color = models.CharField(max_length=250, blank=True, null=True, choices=ColourChoices.choices)
+      password = models.CharField(max_length=1000, blank = True, null =True)
+      is_approved = models.BooleanField(blank=True, null=True, default=False)
+
+      def __str__(self):
+            return f'{self.request_type} for {self.institution}'
+
+
+
+
 
 
 

@@ -15,6 +15,10 @@ import { IsLoggedin,Isauthenticated , Isdepartmentauthenticated} from "./utils/P
 import { Department } from "./Components/Departmentdashboard"
 import { Activity } from "./Components/Activity"
 import { Depassets } from "./Components/Depassts"
+import { CreateInstitution } from "./Components/CreateInstitution"
+import { Join } from "./Components/JoinInstitution"
+
+
 export const App = () => {
  const isauthenticated = JSON.parse(localStorage.getItem("auttokens"))
  const isAuthenticateddepartment = JSON.parse(sessionStorage.getItem("Department"))
@@ -31,6 +35,8 @@ export const App = () => {
        <Routes> 
          <Route path="/" element={<Landingpage/>}/>
          <Route path="/login" element={<IsLoggedin><Loginpage/></IsLoggedin>}/>
+         <Route path="/create" element={<Isauthenticated><CreateInstitution/></Isauthenticated>}/>
+         <Route path='/join' element={<Isauthenticated><Join/></Isauthenticated>}/>
          <Route path="/dashboard/:InstitutionId/" element={<Isauthenticated><Dashboard/></Isauthenticated>}/>
          <Route path="/setup/:InstitutionId/" element={<Isauthenticated><Setup/></Isauthenticated>}/>
          <Route path="/department/:DepartmentId/" element={<Isdepartmentauthenticated><Department/></Isdepartmentauthenticated>}/>

@@ -6,6 +6,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { LoginUser } from "../reducers/Auth";
+import { Link } from "react-router-dom";
 
 export const SignUp = () => {
     const [formstate, setformstate] = React.useState({staff_id : "", password : "", confirm_password:"",email:""})
@@ -186,7 +187,7 @@ let loadingicon = <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="
             </div>
          <div className="flex flex-col items-center gap-y-3">
          <button className="py-4 px-7 restext bg-buttoncolor rounded-[17px]" disabled={isloading}>{isloading ? loadingicon :"Sign Up"}</button>
-         <p>Already have Account ? <span className="text-buttoncolor">Log in</span></p>
+         <p>Already have Account ? <Link to="/login" className="text-buttoncolor">Log in</Link></p>
          </div>
           
 
