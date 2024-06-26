@@ -16,6 +16,12 @@ export const Isauthenticated = ({children}) => {
     return Authdetails.authenticated ? children : <Navigate to='/login' replace/>
 }
 
+export const IsInstitutionAdmin = ({children}) => {
+    const Authdetails = useSelector(state => state.Authdetails)
+
+    return Authdetails.authenticated && Authdetails.is_admin ?  children : <Navigate to='/validate'/>
+}
+
 export const Isdepartmentauthenticated = ({children}) => {
     const Authdetails = useSelector(state => state.Authdetails)
     const AuthDepartmentdetails = useSelector(state => state.AuthDepartmentdetails)

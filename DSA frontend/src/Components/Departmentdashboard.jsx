@@ -366,7 +366,7 @@ const changeimgform = (event) => {
                 </div>
             </div>
             <div className={`w-[80vw] flex gap-y-9 flex-col p-6 z-10`} style={{backgroundColor : `${AuthDepartmentdetails.color}`}}>
-                <h1 className="sm:text-[32px] text-[23px]">Dashboard</h1>
+                <h1 className="sm:text-[32px] text-[23px]">{AuthDepartmentdetails.department_name}</h1>
                 <div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative" onClick={Showassets}>
         <p className="sm:text-[24px] text-[19px]">Add your </p>
         <span className="sm:text-[24px] text-[19px]">Asset</span>

@@ -90,9 +90,11 @@ export const CheckInstitution = () => {
 
         <p className={`sm:text-[25px] rounded-[110px] ${canjoin? '' : 'hidden'} text-[16px]`}>OR</p>
 
-        <Link to="/create" className="bg-specblue p-5 sm:text-[25px] rounded-[110px] text-white text-[16px]  hover:brightness-200" >Create an Institution</Link>
+        <p className={`sm:text-[25px] rounded-[110px] ${!canjoin? '' : 'hidden'} text-[16px]`}>You have requested to be in an Insitution</p>
 
-        <p className="sm:text-[25px] rounded-[110px] text-[16px]">OR</p>
+        <Link to="/create" className={`bg-specblue p-5 sm:text-[25px] rounded-[110px] text-white text-[16px]  hover:brightness-200 ${canjoin? '' : 'hidden'} `} >Create an Institution</Link>
+
+        <p className={`sm:text-[25px] rounded-[110px] ${canjoin? '' : 'hidden'}  text-[16px]`}>OR</p>
 
         <button className="bg-specblue p-5 sm:text-[25px] rounded-[110px] text-white text-[16px]  hover:brightness-200" onClick={()=>{dispatch(Logoutuser())}}>Logout</button>
     </div>

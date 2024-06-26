@@ -27,8 +27,9 @@ export const CreateInstitution = () => {
       }
       catch(error){
         if(error.response?.data.institution_contact){
+        
             seterror(true)
-            seterrormessage('Invalid Contact')
+            seterrormessage('Invalid Contact or Existing contact')
             setformstate(prev => ({
                 ...prev,
                 institution_contact : ''

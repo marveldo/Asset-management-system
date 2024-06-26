@@ -18,12 +18,24 @@ class CustomObtainPairserializer(TokenObtainPairSerializer):
 
 class CustomRefreshSerializer(TokenRefreshSerializer):
     token_class = CustomRefreshToken
+
+
+class RequestUserSerializer(serializers.ModelSerializer):
+    class Meta :
+        model = User
+        fields = ['staff_id','id','email']
     
 
 class RequestSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
     class Meta:
         model = InstitutionRequest
-        exclude = ['user']
+        fields = '__all__' 
+    
+    def get_user(self,obj):
+        user_request = obj.user
+        serializer = RequestUserSerializer(user_request, many = False)
+        return serializer.data
 
     def create(self, validated_data):
         request = self.context.get('request')

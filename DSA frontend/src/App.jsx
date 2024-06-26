@@ -11,12 +11,13 @@ import { Setup } from "./Components/Setup"
 import 'animate.css'
 import { useDispatch } from "react-redux"
 import { Setuser,Setdepartment } from "./reducers/Auth"
-import { IsLoggedin,Isauthenticated , Isdepartmentauthenticated} from "./utils/Protectedroutings"
+import { IsLoggedin,Isauthenticated , Isdepartmentauthenticated, IsInstitutionAdmin} from "./utils/Protectedroutings"
 import { Department } from "./Components/Departmentdashboard"
 import { Activity } from "./Components/Activity"
 import { Depassets } from "./Components/Depassts"
 import { CreateInstitution } from "./Components/CreateInstitution"
 import { Join } from "./Components/JoinInstitution"
+import { Request } from "./Components/Requests"
 
 
 export const App = () => {
@@ -39,6 +40,7 @@ export const App = () => {
          <Route path='/join' element={<Isauthenticated><Join/></Isauthenticated>}/>
          <Route path="/dashboard/:InstitutionId/" element={<Isauthenticated><Dashboard/></Isauthenticated>}/>
          <Route path="/setup/:InstitutionId/" element={<Isauthenticated><Setup/></Isauthenticated>}/>
+         <Route path="/requests/:InstitutionId/" element={<IsInstitutionAdmin><Request/></IsInstitutionAdmin>}/>
          <Route path="/department/:DepartmentId/" element={<Isdepartmentauthenticated><Department/></Isdepartmentauthenticated>}/>
          <Route path="/activity/:DepartmentId/" element={<Isdepartmentauthenticated><Activity/></Isdepartmentauthenticated>}/>
          <Route path="/assets/:DepartmentId/" element={<Isdepartmentauthenticated><Depassets/></Isdepartmentauthenticated>}/>

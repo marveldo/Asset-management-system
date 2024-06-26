@@ -22,41 +22,33 @@ import { useLocation } from "react-router-dom"
 import icon from "../Images/619551_add_correct_done_go_ok_icon 1.svg"
 
 
-export const Setup = () => {
+export const Request = () => {
   const [showresnav, setshowresnav] = React.useState(false)
-  const location = useLocation()
-  const [formdiv, setformdiv] = React.useState(location.state?.formdiv ? location.state?.formdiv : false)
+  const [data, setdata] = React.useState(null)
   const params = useParams()
   const id = params.InstitutionId
-  const [formstate, setformstate] = React.useState({
-    Institution :  id,
-    department_name : '',
-    color : '',
-    password : '',
-    confirm_password : ''
-  })
-  const [index, setindex] =React.useState(null)
   const [imgform, setimgform] = React.useState(null)
   const [imgsubmittingform , setimgsubmittingform] = React.useState(null)
   const [imgformdiv, setimgformdiv] = React.useState(false)
   const [showdiv, setshowdiv] = React.useState(false)
+  const [idto,setid] = React.useState(null)
+  const [requestloading , setrequestloading] = React.useState(false)
   const [showextranav, setshowextranav] = React.useState(false)
-  const [isloading, setloading] = React.useState(false)
+  const [isloading, setloading] = React.useState(true)
   const [imgloading, setimgloading] = React.useState(false)
   const [error , seterror] = React.useState(false)
   const [showapprovedmessage, setshowapprovedmessage] = React.useState(false)
   const [errortype, seterrortype] = React.useState({
     Updateimage : false,
     Changingpassword : false,
-    passwordvalidation : false,
-    Createdepartment : false,
-    emptyfields : false
-
-  })
- const [drafts, setdrafts] = React.useState(null)
+    requests: false,
+    updaterequests: false
+ })
+ const [showapprovalmessage, setshowapprovalmessage] = React.useState(false)
+ 
   
   const dispatch = useDispatch()
-  const navigate = useNavigate()
+
 
   const axiis = Useaxios()
   const Authdetails = useSelector(state => state.Authdetails)
@@ -84,15 +76,7 @@ const clickprofilepicture = () => {
   setshowextranav(false)
 }
 
-const Changeform = (event) => {
-  const {name, value} = event.target
 
-  setformstate(prev => ({
-    ...prev,
-    [name]: value
-  }))
-
-}
 
 const changeimgform = (event) => {
   const file = event.target.files[0]
@@ -159,163 +143,138 @@ const changeimgform = (event) => {
       })
     })
   }
-  if(errortype.passwordvalidation){
-    seterrortype(prev =>({
+  if(errortype.requests){
+    Querybackend()
+    seterrortype(prev => ({
       ...prev,
-      passwordvalidation : false
+      requests : false
     }))
   }
-  if(errortype.emptyfields){
-    seterrortype(prev =>({
+  if(errortype.updaterequests){
+    seterrortype(prev => ({
       ...prev,
-      emptyfields : false
+      updaterequests : false
     }))
   }
+
 
   
  }
 
- const SubmittoBackend = async() => {
-   setloading(true)
-   if(Authdetails.is_admin){
-    try{
-      const response = await axiis.post('/Departments/',formstate)
-      if(response.status === 201){
-         navigate(`/dashboard/${id}`)
+ const Querybackend = async() => {
+      if(!isloading){
+        setloading(true)
       }
-     }
-    catch(error){
-      console.error(error)
-      seterror(true)
-      seterrortype(prev => ({
-        ...prev,
-        Createdepartment : true
-      }))
-    }
-    finally{
-      setloading(false)
-    }
-    }
-    else{
       try{
-        const response = await axiis.post('/Requests/', { institution : formstate.Institution , department_name : formstate.department_name, color : formstate.color, password: formstate.password, request_type : 'department_type' })
-        if(response.status === 201 ){
-          setshowdiv(true)
-          setshowapprovedmessage(true)
-          const timeoutid = setTimeout(()=>{
-           setshowdiv(false)
-           setshowapprovedmessage(false)
-           setformdiv(false)
-           setformstate(PREV => ({
-            ...PREV,
-            department_name : '',
-            color : '',
-            password : '',
-            confirm_password : ''
-           }))
-           return () => clearTimeout(timeoutid)
-          },[2000])
-
-        }
-
+         const response = await axiis.get(`/Institution/${id}/`)
+         setdata(response.data)
+      
       }
       catch(error){
-
         seterror(true)
         seterrortype(prev => ({
           ...prev,
-          Createdepartment : true
+          requests : true
         }))
+
+
       }
       finally{
         setloading(false)
       }
-
-    }
-  }
-
-
-
- const FormSubmit = () => {
-  if(formstate.password !== formstate.confirm_password){
-    seterror(true)
-    seterrortype(prev => ({
-      ...prev,
-      passwordvalidation : true
-    }))
  }
- if(formstate.department_name === '' || formstate.password ==='' || formstate.confirm_password === '' || formstate.color === ''){
-  seterror(true)
-  seterrortype(prev => ({
-    ...prev,
-    emptyfields : true
-  }))
+
+
+ let requests = ''
+
+ const setApproval = (id) =>{
+  setshowextranav(false)
+  setshowdiv(true)
+  setid(id)
+  setshowapprovalmessage(true)
+  
+}
+
+const noclicked = () => {
+  setid(null)
+  setshowdiv(false)
+  setshowapprovalmessage(false)
+}
+
+const yesclicked = async() => {
+  setrequestloading(true)
+  console.log(idto)
+  try{
+    const response = await axiis.put(`/Requests/${idto}/`,{is_approved : true})
+    setshowapprovalmessage(false)
+    setshowapprovedmessage(true)
+    setdata(prev => ({
+      ...prev,
+      requests : prev.requests.filter((item) => item.id !== idto )
+    }))
+    setid(false)
+    const timeoutid = setTimeout(()=> {
+      setshowapprovedmessage(false)
+      setshowdiv(false)
+      return () => clearTimeout(timeoutid)
+    }, [2000])
+
+    
+
+  }
+   catch(error){
+    seterror(true)
+    seterrortype((prev)=>({
+      ...prev,
+      updaterequests : true
+    }))
+   }
+   finally{
+    setrequestloading(false)
+   }
+}
+ if(data){
+  if(data.requests.length >= 1){
+  requests = data.requests.map((obj) => {
+    return(
+      <div key={obj.id} className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative z-20" onClick={()=>{setApproval(obj.id)}}>
+
+      <p className="sm:text-[17px] text-[10px] text-[#F4B617] mb-3">{obj.request_info}-{obj.department_name}</p>
+
+      
+     
+      <span className="sm:text-[17px] text-[10px]">made by {obj.user.staff_id}</span>
+  
+  
+      <div className="absolute p-4 right-0 bottom-0">
+          <img src={icon11} className="sm:w-[28px] sm:h-[28px] w-[18px] h-[18px]" alt="plusicon"/>
+      </div>
+  
+     
+  </div>
+    )
+  })
 }
 else{
-   SubmittoBackend()
+  requests =<div className="h-full w-full pt-28 flex justify-center">
+  No Requests to display
+</div>
 }
  }
-
- const setdraft = (index, obj) => {
-  setindex(index)
-  setformstate(prev => ({
-    ...prev,
-    department_name : obj.department_name,
-    color : obj.color,
-    password : obj.password,
-    confirm_password : obj.confirm_password
-  }))
-  setformdiv(true)
+ else{
+  requests = ''
  }
 
- const SaveAsDraft = () => {
-  const Drafts = JSON.parse(localStorage.getItem('drafts'))
-  if(Drafts){
-  if(index !== null){
-       Drafts[index].department_name = formstate.department_name
-       Drafts[index].color = formstate.color
-       Drafts[index].password = formstate.password
-       Drafts[index].confirm_password = formstate.confirm_password
-     
-       localStorage.setItem('drafts',JSON.stringify(Drafts))
-       setdrafts(Drafts)
-       
-       setformstate(prev => ({
-        ...prev,
-        department_name : '',
-        password : '',
-        confirm_password : ''
-}))
-        setformdiv(false)
-        setindex(null)
-  }
-  if(index === null){
-      Drafts.push(formstate)
-  
-      localStorage.setItem('drafts',JSON.stringify(Drafts))
-      setdrafts(Drafts)
-      setformstate(prev => ({
-          ...prev,
-          department_name : '',
-          password : '',
-          confirm_password : ''
-   }))
-    setformdiv(false)
-  }
-  }
-  else{
+ 
+ let divs =   <div className={`px-3 h-[70%] pt-3 flex gap-x-6 max-[600px]:justify-center content-start flex-wrap overflow-y-auto gap-y-16 specdiv`}>
+    {requests}
    
-    localStorage.setItem('drafts', JSON.stringify([formstate]))
-    setdrafts([formstate])
-    setformstate(prev => ({
-      ...prev,
-      department_name : '',
-      password : '',
-      confirm_password : ''
-     }))
-     setformdiv(false)
-  }
- }
+</div>   
+
+
+
+
+
 
  
 
@@ -331,138 +290,49 @@ else{
   if(errortype.Changingpassword){
     message = "check internet Connection"
   }
-  if(errortype.passwordvalidation){
-    message = "Passwords dont match"
+  if(errortype.requests){
+    message = "Check Internet connection"
   }
-  if(errortype.Createdepartment){
-    message = "Failed Check connection"
+  if(errortype.updaterequests){
+    message = "Check Internet connection"
   }
-  if(errortype.emptyfields){
-    message = "No field can be empty"
+
+  const Disapprovedclicked = async() => {
+    setrequestloading(true)
+    try{
+      const response = await axiis.delete(`/Requests/${idto}/`)
+      setshowapprovalmessage(false)
+      setshowdiv(false)
+      setdata(prev => ({
+        ...prev,
+        requests : prev.requests.filter((item) => item.id !== idto )
+      }))
+      setid(false)
+    }catch(error){
+      seterror(true)
+      seterrortype(prev => ({
+        ...prev,
+        updaterequests : true
+      }))
+    }finally{
+      setrequestloading(false)
+    }
   }
+
 
 
   let loadingicon = <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity={0.25}></path>
 <path fill="currentColor" d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></path>
 </svg>
 
+const loading_icon = <div className="w-full h-[60%] flex flex-col gap-y-2 justify-center  items-center"> 
+<svg xmlns="http://www.w3.org/2000/svg" className="sm:w-[50px] w-[36px]" viewBox="0 0 24 24"><path fill="#19327b" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity={0.5}></path><path fill="#19327b" d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"><animateTransform attributeName="transform" dur="0.975s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"></animateTransform></path></svg>
 
-let drafts_list = ''
-
-
-
-if(drafts){
-   drafts_list = drafts.map((obj,index )=> {
-    return(
-      <div key={index} className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative z-20" onClick={()=>{setdraft(index, obj)}}>
-
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 absolute top-3 right-3 z-30 " onClick={(event)=> {deletedrafts(index, event)}}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-  </svg>
-          <p className="sm:text-[20px] text-[16px] text-[#F4B617]">Draft</p>
-          <p className="sm:text-[17px] text-[10px]">Department name :</p>
-          <span className="sm:text-[17px] text-[10px]">{obj.department_name}</span>
-  
-  
-          <div className="absolute p-4 right-0 bottom-0">
-              <img src={icon11} className="sm:w-[28px] sm:h-[28px] w-[18px] h-[18px]" alt="plusicon"/>
-          </div>
-  
-         
-      </div>
-    )
-  })
-}
-
-const deletedrafts = (index, event) => {
-  
-  const filtered_drafts = drafts.filter((item, i) => i !== index)
-  setdrafts(filtered_drafts)
-  localStorage.setItem('drafts', JSON.stringify(filtered_drafts))
-  event.stopPropagation(); 
- }
-
-const clickcancel = ()=>{
-  setformdiv(false)
-  setformstate(prev => ({
-    ...prev,
-    department_name : '',
-    color : '',
-    password : '',
-    confirm_password : ''
-  }))
-  setindex(null)
-}
-
-let div = <div className="px-3 h-[70%] pt-3 flex gap-x-6 max-[600px]:justify-center content-start flex-wrap overflow-y-auto gap-y-16 specdiv">
-<div className="w-[219px] departmentdiv rounded-[20px] sm:h-[150px] h-[115px] mb-7  bg-white shadow-shadowcolour shadow-lg p-3 relative" onClick={()=>{setformdiv(true)}}>
-        <p className="sm:text-[24px] text-[19px]">Add your </p>
-        <span className="sm:text-[24px] text-[19px]">Department</span>
-
-        <div className="absolute p-4 right-0 bottom-0">
-            <img src={plusicon} className="sm:w-[48px] sm:h-[48px] w-[38px] h-[38px]" alt="plusicon"/>
-        </div>
-
-       
-    </div>
-  {/* TO BE LOOPED */}
-    {drafts_list}
-  
-    {/* END OF TO BE LOOPED */}
-</div>
-
-
-
-let div2 =<div className="w-full h-full flex flex-col gap-y-4 items-center">
-  <div className="h-[75%] sm:w-[85%] w-[95%] bg-[#FCF8F5] rounded-[20px] relative shadow-shadowcolour shadow-lg py-4 flex flex-col items-center justify-between">
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 absolute top-3 right-3" onClick={clickcancel}>
-  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-</svg>
-    {/* BEGINNING OF FIELDS */}
-    <div className="flex flex-col gap-y-1 text-center sm:w-[40%] w-[80%]">
-        <p>Name of department</p>
-        <input name="department_name" value={formstate.department_name} type="text" className=" h-[45px] shadow-[#00000040] shadow-md focus:outline-none p-3" onChange={Changeform} required disabled={isloading}/>
-
-    </div>
-
-    <div className="flex flex-col gap-y-1 text-center sm:w-[40%] w-[80%]">
-        <p>Pick A colour</p>
-        <select id="mySelect" name="color" value={formstate.color} className=" h-[45px] shadow-[#00000040]  shadow-md focus:outline-none p-3" onChange={Changeform} required disabled={isloading}>
-                   <option value="" >Select A colour</option>
-                    <option value="red">Red</option>
-                     <option  value="yellow">Yellow</option>
-                    <option  value="blue">Blue</option>
-                    <option  value="indigo">Indigo</option>
-                    <option value="orange">Orange</option>
-                    <option  value="purple">Purple</option>
-                    <option  value="green">Green</option>
-</select>
-
-    </div>
-
-    <div className="flex flex-col gap-y-1 text-center sm:w-[40%] w-[80%]">
-        <p>Password</p>
-        <input name="password" value={formstate.password} type="password" className=" h-[45px] shadow-[#00000040] shadow-md focus:outline-none p-3" onChange={Changeform} required disabled={isloading}/>
-
-    </div>
-
-    <div className="flex flex-col gap-y-1 text-center sm:w-[40%] w-[80%]">
-        <p>Confirm Password</p>
-        <input name="confirm_password" value={formstate.confirm_password} type="password" className=" h-[45px] shadow-[#00000040] shadow-md focus:outline-none p-3" onChange={Changeform} required disabled={isloading}/>
-
-    </div>
-    {/* END OF FIELDS */}
-    </div>
-    <div className="sm:w-[68%] w-[100%]  flex justify-between">
-      <button className="rounded-[20px] bg-[#59D2DA] p-3" onClick={SaveAsDraft}>Save as draft</button>
-      <button className="rounded-[20px] bg-[#59D2DA] p-3" onClick={FormSubmit}>{isloading ? loadingicon : 'Complete'}</button>
-    </div>
-    </div> 
-
-
+              <p className="sm:text-[25px] text-[16px]">Loading Requests.......</p>
+              </div>
 
   React.useEffect(()=>{
-    setdrafts(JSON.parse(localStorage.getItem('drafts')))
+    Querybackend()
     GetCurrentImg()
   },[])
 
@@ -497,10 +367,23 @@ let div2 =<div className="w-full h-full flex flex-col gap-y-4 items-center">
           <button className="p-3 bg-buttoncolor rounded-[20px]">{imgloading ? loadingicon : 'Submit'}</button>
         </form>
 
+        <div className={`flex flex-col justify-center relative rounded-[20px] py-5 px-10 items-center gap-y-5 ${showapprovalmessage? '': 'hidden'} bg-white `}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 absolute top-3 right-3" onClick={noclicked}>
+  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg>
+          <p>Approve This Request ?</p>
+
+          <div className="flex gap-x-5">
+            <button className="bg-[#59D2DA] py-3 px-5 rounded-[20px]" onClick={yesclicked} disabled={requestloading}>{requestloading? loadingicon : 'Approve'}</button>
+            <button className="bg-[#59D2DA] py-3 px-5 rounded-[20px]" onClick={Disapprovedclicked}  disabled={requestloading}>{requestloading ? loadingicon : 'Disapprove'}</button>
+          </div>
+
+        </div>
+
         <div className={`bg-white p-4 flex flex-col rounded-[20px] items-center ${showapprovedmessage? '' : 'hidden'} text-center gap-y-8`}>
                    <img src={icon} className="w-[40px] h-[40px]" alt="done"/>
                    <div className="flex gap-x-6 w-full justify-center">
-                 Your request has been sent!!
+                 Your approval has been sent!!
                    </div>
                 </div>
 
@@ -547,9 +430,9 @@ let div2 =<div className="w-full h-full flex flex-col gap-y-4 items-center">
                {/* To Be changed Later On*/}
                     <li className=" opacity-0 p-4 flex gap-x-3 hidden-div rounded-l-[20px] rounded-t-[20px] rounded-r-none items-center"></li>
                     <Link to={`/dashboard/${id}/`} className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]  items-center"> <img src={navicon1} className="w-[29px] h-[29px]" alt="dashboard icon"/>  <p className="hidden-item">Dashboard</p></Link>
-                    <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start  bg-dashboardcolor w-[87%] items-center"> <img src={navicon3} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Setup</p></li>
+                    <Link to={`/setup/${id}/`} className="p-4 flex gap-x-3  rounded-l-[20px] justify-start  w-[87%] items-center"> <img src={navicon3} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Setup</p></Link>
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]  items-center"> <img src={navicon4} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Help</p> </li>
-                    <Link to={`/requests/${id}/`} className={`p-4 flex gap-x-3 ${Authdetails.is_admin ? '' : 'hidden'}   rounded-l-[20px] justify-start w-[87%] items-center`}> <img src={navicon5} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item"> Requests</p></Link>
+                    <li className={`p-4 flex gap-x-3 ${Authdetails.is_admin ? '' : 'hidden'}   rounded-l-[20px] justify-start w-[87%]  bg-dashboardcolor items-center`}> <img src={navicon5} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item"> Requests</p></li>
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%] opacity-0  items-center"> <img src={navicon2} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Assets</p> </li> 
                     <li className="p-4 flex gap-x-3  rounded-l-[20px] justify-start w-[87%]  opacity-0 items-center" > <img src={navicon7} className="w-[29px] h-[29px]" alt="dashboard icon"/> <p className="hidden-item">Activity</p></li>
 
@@ -558,11 +441,11 @@ let div2 =<div className="w-full h-full flex flex-col gap-y-4 items-center">
 
                 </div>
             </div>
-            <div className="w-[80vw] bg-dashboardcolor flex flex-col pb-12  z-10">
-                <h1 className="sm:text-[32px] text-[23px] ms-6 mt-4">Setup</h1>
+            <div className="w-[80vw] bg-dashboardcolor flex flex-col pb-12 gap-y-2 z-10">
+                <h1 className="sm:text-[32px] text-[23px] ms-6 mt-4">Requests</h1>
 
 
-                {formdiv? div2 : div}
+                {isloading? loading_icon :divs}
                
 
             </div>
